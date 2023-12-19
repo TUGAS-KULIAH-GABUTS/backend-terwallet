@@ -5,19 +5,19 @@ import { Op } from 'sequelize'
 import { Pagination } from '../../utilities/pagination'
 import { requestChecker } from '../../utilities/requestCheker'
 import { CONSOLE } from '../../utilities/log'
-import { type CrudExampleAttributes, CrudExampleModel } from '../../models/crudExample'
+import { ExpenseModel, type IExpenseAttributes } from '../../models/expense'
 
-export const findAllCrudExample = async (req: any, res: Response): Promise<any> => {
+export const findAllExpense = async (req: any, res: Response): Promise<any> => {
   try {
     const page = new Pagination(
       parseInt(req.query.page) ?? 0,
       parseInt(req.query.size) ?? 10
     )
-    const result = await CrudExampleModel.findAndCountAll({
+    const result = await ExpenseModel.findAndCountAll({
       where: {
         deleted: { [Op.eq]: 0 },
         ...(Boolean(req.query.search) && {
-          [Op.or]: [{ crudExampleName: { [Op.like]: `%${req.query.search}%` } }]
+          [Op.or]: [{ expenseName: { [Op.like]: `%${req.query.search}%` } }]
         })
       },
       order: [['id', 'desc']],
@@ -38,11 +38,11 @@ export const findAllCrudExample = async (req: any, res: Response): Promise<any> 
   }
 }
 
-export const findOneCrudExample = async (req: any, res: Response): Promise<any> => {
-  const requestParams = req.params as CrudExampleAttributes
+export const findDetailExpense = async (req: any, res: Response): Promise<any> => {
+  const requestParams = req.params as IExpenseAttributes
 
   const emptyField = requestChecker({
-    requireList: ['crudExampleId'],
+    requireList: ['expenseId'],
     requestData: requestParams
   })
 
@@ -53,10 +53,10 @@ export const findOneCrudExample = async (req: any, res: Response): Promise<any> 
   }
 
   try {
-    const result = await CrudExampleModel.findOne({
+    const result = await ExpenseModel.findOne({
       where: {
         deleted: { [Op.eq]: 0 },
-        crudExampleId: { [Op.eq]: requestParams.crudExampleId }
+        expenseId: { [Op.eq]: requestParams.expenseId }
       }
     })
 

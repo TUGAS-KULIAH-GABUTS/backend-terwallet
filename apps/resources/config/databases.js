@@ -2,7 +2,7 @@ module.exports = {
   development: {
     username: 'root',
     password: 'toor',
-    database: 'crud_example_db',
+    database: 'terwalet_db',
     host: '127.0.0.1',
     dialect: 'mysql'
   },

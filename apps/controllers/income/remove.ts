@@ -3,14 +3,14 @@ import { StatusCodes } from 'http-status-codes'
 import { ResponseData } from '../../utilities/response'
 import { Op } from 'sequelize'
 import { requestChecker } from '../../utilities/requestCheker'
-import { CrudExampleModel, type CrudExampleAttributes } from '../../models/crudExample'
+import { IncomeModel, type IncomeAttributes } from '../../models/income'
 
-export const updateCrudExample = async (req: any, res: Response): Promise<any> => {
-  const requestBody = req.body as CrudExampleAttributes
+export const removeIncome = async (req: any, res: Response): Promise<any> => {
+  const requestQuery = req.query as IncomeAttributes
 
   const emptyField = requestChecker({
-    requireList: ['crudExampleId'],
-    requestData: requestBody
+    requireList: ['incomeId'],
+    requestData: requestQuery
   })
 
   if (emptyField.length > 0) {
@@ -20,10 +20,10 @@ export const updateCrudExample = async (req: any, res: Response): Promise<any> =
   }
 
   try {
-    const result = await CrudExampleModel.findOne({
+    const result = await IncomeModel.findOne({
       where: {
         deleted: { [Op.eq]: 0 },
-        crudExampleId: { [Op.eq]: requestBody.crudExampleId }
+        incomeId: { [Op.eq]: requestQuery.incomeId }
       }
     })
 
@@ -33,18 +33,8 @@ export const updateCrudExample = async (req: any, res: Response): Promise<any> =
       return res.status(StatusCodes.NOT_FOUND).json(response)
     }
 
-    const newData: CrudExampleAttributes | any = {
-      ...(requestBody.crudExampleName.length > 0 && {
-        crudExampleName: requestBody.crudExampleName
-      })
-    }
-
-    await CrudExampleModel.update(newData, {
-      where: {
-        deleted: { [Op.eq]: 0 },
-        crudExampleId: { [Op.eq]: requestBody.crudExampleId }
-      }
-    })
+    result.deleted = 1
+    void result.save()
 
     const response = ResponseData.default
     response.data = { message: 'success' }

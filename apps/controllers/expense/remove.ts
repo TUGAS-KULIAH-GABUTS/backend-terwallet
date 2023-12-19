@@ -3,13 +3,13 @@ import { StatusCodes } from 'http-status-codes'
 import { ResponseData } from '../../utilities/response'
 import { Op } from 'sequelize'
 import { requestChecker } from '../../utilities/requestCheker'
-import { type CrudExampleAttributes, CrudExampleModel } from '../../models/crudExample'
+import { ExpenseModel, type IExpenseAttributes } from '../../models/expense'
 
-export const removeCrudExample = async (req: any, res: Response): Promise<any> => {
-  const requestQuery = req.query as CrudExampleAttributes
+export const removeExpense = async (req: any, res: Response): Promise<any> => {
+  const requestQuery = req.query as IExpenseAttributes
 
   const emptyField = requestChecker({
-    requireList: ['crudExampleId'],
+    requireList: ['expenseId'],
     requestData: requestQuery
   })
 
@@ -20,10 +20,10 @@ export const removeCrudExample = async (req: any, res: Response): Promise<any> =
   }
 
   try {
-    const result = await CrudExampleModel.findOne({
+    const result = await ExpenseModel.findOne({
       where: {
         deleted: { [Op.eq]: 0 },
-        crudExampleId: { [Op.eq]: requestQuery.crudExampleId }
+        expenseId: { [Op.eq]: requestQuery.expenseId }
       }
     })
 
